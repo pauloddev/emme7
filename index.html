@@ -456,9 +456,10 @@ $$('.rv').forEach(el=>ro.observe(el));
 /* video carousel */
 const car=$('#car'),track=$('.car-track',car),slides=$$('.car-slide',car),n=slides.length,cnt=$('.car-count',car);
 let i=3,timer=null,vis=false;const pad=x=>String(x).padStart(2,'0');
-const lv=v=>{if(v.dataset.src){v.src=v.dataset.src;v.removeAttribute('data-src')}};
+const lv=v=>{if(v.dataset.src){v.preload='auto';v.src=v.dataset.src;v.removeAttribute('data-src')}};
+const warm=()=>{for(let d=-2;d<=2;d++)lv($('video',slides[(i+d+n)%n]))};
 function layout(){const w=slides[0].offsetWidth,g=parseFloat(getComputedStyle(track).columnGap)||0;track.style.transform=`translate3d(${car.clientWidth/2-(i*(w+g)+w/2)}px,0,0)`;
- slides.forEach((s,k)=>{s.classList.toggle('on',k===i);const v=$('video',s);if(k===i&&vis){lv(v);if(!reduce)v.play().catch(()=>{})}else v.pause()});cnt.innerHTML=`<b>${pad(i+1)}</b> / ${pad(n)}`}
+ if(vis)warm();slides.forEach((s,k)=>{s.classList.toggle('on',k===i);const v=$('video',s);if(k===i&&vis){lv(v);if(!reduce)v.play().catch(()=>{})}else v.pause()});cnt.innerHTML=`<b>${pad(i+1)}</b> / ${pad(n)}`}
 const go=k=>{i=(k+n)%n;layout();restart()};
 const restart=()=>{clearInterval(timer);if(!reduce&&vis)timer=setInterval(()=>go(i+1),9000)};
 $('.prev',car).addEventListener('click',()=>go(i-1));$('.next',car).addEventListener('click',()=>go(i+1));
